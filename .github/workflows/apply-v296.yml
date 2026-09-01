@@ -1,0 +1,33 @@
+name: Apply V2.9.6 Manager Edit
+
+on:
+  push:
+    paths:
+      - 'apply_v296.py'
+      - '.github/workflows/apply-v296.yml'
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  apply:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.x'
+      - name: Apply V2.9.6 patch
+        run: python apply_v296.py
+      - name: Commit updated index
+        run: |
+          git config user.name "Visiteen Automation"
+          git config user.email "automation@visiteen.com.tr"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "No index change needed"
+          else
+            git commit -m "Update live radar to V2.9.6"
+            git push
+          fi

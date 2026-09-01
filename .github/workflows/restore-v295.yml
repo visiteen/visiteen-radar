@@ -1,0 +1,32 @@
+name: Restore Stable V2.9.5
+
+on:
+  push:
+    paths:
+      - '.github/workflows/restore-v295.yml'
+
+permissions:
+  contents: write
+
+jobs:
+  restore:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Restore stable index.html
+        run: |
+          git show fce495b27e8439bc5316d73ba4050bc4f31ee3d3:index.html > index.html
+      - name: Commit restore
+        run: |
+          git config user.name "Visiteen Recovery Bot"
+          git config user.email "actions@users.noreply.github.com"
+          git add index.html
+          if git diff --cached --quiet; then
+            echo "No restore needed"
+          else
+            git commit -m "Restore stable live radar V2.9.5"
+            git push
+          fi
